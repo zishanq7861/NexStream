@@ -1,21 +1,20 @@
-import { Router } from "express";
-const express = require('express');
+import express from "express"
 
 import { 
     loginUser, 
-    logoutUser, 
+   // logoutUser, 
     registerUser, 
-    refreshAccessToken, 
-    changeCurrentPassword, 
-    getCurrentUser, 
-    updateUserAvatar, 
-    updateUserCoverImage, 
-    getUserChannelProfile, 
-    getWatchHistory, 
-    updateAccountDetails
+    // refreshAccessToken, 
+    // changeCurrentPassword, 
+    // getCurrentUser, 
+    // updateUserAvatar, 
+    // updateUserCoverImage, 
+    // getUserChannelProfile, 
+    // getWatchHistory, 
+    // updateAccountDetails
 } from "../controllers/user.controller.js";
 import {upload} from "../middlewares/multer.middleware.js"
-import { verifyJWT } from "../middlewares/auth.middleware.js";
+//import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 
 const router = express.Router();
@@ -36,6 +35,7 @@ router.route("/register").post(
 
 router.route("/login").post(loginUser)
 
+/*
 //secured routes
 router.route("/logout").post(verifyJWT,  logoutUser)
 router.route("/refresh-token").post(refreshAccessToken)
@@ -48,5 +48,6 @@ router.route("/cover-image").patch(verifyJWT, upload.single("coverImage"), updat
 
 router.route("/c/:username").get(verifyJWT, getUserChannelProfile)
 router.route("/history").get(verifyJWT, getWatchHistory)
+*/
 
 export default router; 

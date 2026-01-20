@@ -52,12 +52,23 @@ const userSchema = new Schema(
     }
 )
 
-userSchema.pre("save", async function (next) {
-    if(!this.isModified("password")) return next();
+// userSchema.pre("save", async function (next) {
+//     if(!this.isModified("password")) return next();
 
-    this.password = await bcrypt.hash(this.password, 10)
-    next()
-})
+//     this.password = await bcrypt.hash(this.password, 10)
+//     next()
+// })
+userSchema.pre("save", async function () {
+    // If password isn't modified, just exit the function
+    if (!this.isModified("password")) return;
+
+    // Hash the password and save it back to 'this'
+    this.password = await bcrypt.hash(this.password, 10);
+    // No next() needed here because it is an async function
+});
+
+
+
 
 userSchema.methods.isPasswordCorrect = async function(password){
     return await bcrypt.compare(password, this.password)

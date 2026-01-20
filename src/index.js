@@ -5,8 +5,9 @@ dotenv.config({
 
 import connectDB from "./db/dbConnection.js";
 
-import express from "express"
-const app = express();
+// import express from "express"
+// const app = express();
+import { app } from "./app.js";
 
 connectDB()
 .then(() => {
