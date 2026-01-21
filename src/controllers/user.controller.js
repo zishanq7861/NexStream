@@ -6,13 +6,15 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose";
 
-
+//access tokens are short lived whereas refresh tokens are long lived
+//to generate access and refresh token call this method
 const generateAccessAndRefereshTokens = async(userId) =>{
     try {
         const user = await User.findById(userId)
         const accessToken = user.generateAccessToken()
         const refreshToken = user.generateRefreshToken()
 
+//we give access token to the user but refresh token we save in our database also so that we dont have to ask password everytime from the user
         user.refreshToken = refreshToken
         await user.save({ validateBeforeSave: false })
 
@@ -20,9 +22,12 @@ const generateAccessAndRefereshTokens = async(userId) =>{
 
 
     } catch (error) {
+         console.error("TOKEN_GEN_ERROR:", error);
         throw new ApiError(500, "Something went wrong while generating referesh and access token")
     }
 }
+
+//-------------------------------------------------------------------------------------------
 
 const registerUser = asyncHandler( async (req, res) => {
 
@@ -37,7 +42,6 @@ const registerUser = asyncHandler( async (req, res) => {
     // check for user creation response
     // if user created then return res
     //if user not created send error
-
 
     const {fullName, email, username, password } = req.body  //destruct data which we are getting from req.body
     // console.log("email: ", email);
@@ -106,30 +110,35 @@ const registerUser = asyncHandler( async (req, res) => {
 } )
 
 const loginUser = asyncHandler(async (req, res) =>{
-    // req body -> data
+
+    //algorithm ->
+    // take out data from req body
     // username or email
-    //find the user
+    //find the user (if there is user then)
     //password check
-    //access and referesh token
-    //send cookie
+    //access and referesh token generate and send to user
+    //send tokens in the form of cookie
+
+    // take out data from req body
+
+    if (!req.body) {
+        throw new ApiError(400, "Request body is missing");
+    }
 
     const {email, username, password} = req.body
-    console.log(email);
+    // console.log(email);
 
-    if (!username && !email) {
-        throw new ApiError(400, "username or email is required")
-    }
     
-    // Here is an alternative of above code based on logic discussed in video:
-    // if (!(username || email)) {
-    //     throw new ApiError(400, "username or email is required")
-        
-    // }
+    // Check if at least one (email or username) is provided
+    if (!(username || email)) {
+        throw new ApiError(400, "Username or email is required");
+    }
 
     const user = await User.findOne({
-        $or: [{username}, {email}]
+        $or: [{username}, {email}]     //$or is mongoDB operator -> either find username or email
     })
 
+    //if user does not exists
     if (!user) {
         throw new ApiError(404, "User does not exist")
     }
@@ -140,10 +149,12 @@ const loginUser = asyncHandler(async (req, res) =>{
     throw new ApiError(401, "Invalid user credentials")
     }
 
+  //...........................................................................................
    const {accessToken, refreshToken} = await generateAccessAndRefereshTokens(user._id)
 
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
 
+//sending cookies 
     const options = {
         httpOnly: true,
         secure: true
@@ -281,7 +292,7 @@ const updateAccountDetails = asyncHandler(async(req, res) => {
         {
             $set: {
                 fullName,
-                email: email
+                email
             }
         },
         {new: true}
