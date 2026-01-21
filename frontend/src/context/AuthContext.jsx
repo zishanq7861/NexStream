@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
         const response = await api.get('/users/current-user');
         setUser(response.data.data);
       } catch (error) {
-        // If not logged in, just set user to null instead of crashing
+        // Essential for Guests: ensure user is explicitly null
         setUser(null);
       } finally {
         setLoading(false);
@@ -24,8 +24,11 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ user, setUser, loading }}>
-      {/* This line prevents the white screen while the app is loading */}
-      {!loading && children}
+      {/* REMOVED: {!loading && children} 
+          By rendering children immediately, your Header can show 
+          the Login/Signup buttons while the backend is still checking.
+      */}
+      {children}
     </AuthContext.Provider>
   );
 };
