@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  --color-main-bg: #0F172A;
+  --color-header-bg: #000000;
+  --color-card-bg: #1E293B;
+  --color-neon-cyan: #00F2FF;
+  --color-electric-purple: #7000FF;
+  --color-description-text: #94A3B8;
+  
+  /* Add this custom shadow for the 'Cyber' effect */
+  --shadow-neon: 0 0 10px rgba(0, 242, 255, 0.5);
+  --shadow-purple: 0 0 15px rgba(112, 0, 255, 0.3);
+}
+
+/* Custom Scrollbar for that Sleek Look */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0F172A;
+}
+::-webkit-scrollbar-thumb {
+  background: #1E293B;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00F2FF;
+}
